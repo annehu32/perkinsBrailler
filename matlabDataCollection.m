@@ -1,10 +1,15 @@
-%The needed files: MyserialfunRead
+% matlabDataCollection.m
+% Last edited by: Anne Hu, 11/27/24
+% Purpose: To capture load cell serial data from Arduino IDE
+% Necessary files: MyserialfunRead.m
+% TODOs: Change the port and baud rate in line 12, change data file name in line 35
+
 clear
 close all
 %Set up serial port
 %select COM option for mac
 availablePorts = serialportlist;
-arduinoObj = serialport("/dev/cu.usbmodem11401",57600);
+arduinoObj = serialport("/dev/cu.usbmodem11401",57600); # TODO: Ensure that baud rate and port name matches those in Arduinoi IDE
 pause(5)
 configureTerminator(arduinoObj,"CR")
 %configureCallback(arduinoObj,"byte",50,@myserialfun3D_v2a)
@@ -27,7 +32,7 @@ while(counter<10000)
 %     %kk = [kk; Data_1];
     data(counter) = d;
     disp(counter + ": "+d);
-    save('FtestAfter.mat', 'data');
+    save('TESTNAME.mat', 'data'); # TODO: Change file name for each test
 
 end
 
