@@ -5,6 +5,8 @@
    Olav Kallhovd sept2017
 
    Modified by Anne Hu, 11/14/24
+   Actions: Ensure baud rate on line 40 matches that in Matlab, serial monitor closed
+   Note: This should be run before the Matlab script is started
    -------------------------------------------------------------------------------------
 */
 
@@ -36,7 +38,7 @@ const int calVal_eepromAdress = 0;
 unsigned long t = 0;
 
 void setup() {
-  Serial.begin(57600); delay(250);
+  Serial.begin(57600); delay(250); 
   Serial.println();
   Serial.println("Starting...");
 
