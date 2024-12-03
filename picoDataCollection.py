@@ -1,17 +1,16 @@
 # picoDataCollection.py
-# Last edited by: Anne Hu, 11/27/24
+# Last edited by: Anne Hu, 12/2/24
 # Purpose: To run the linear actuator to depress the brailler with load cell attached for lubricant test data collection.
 
 from machine import Pin
 import time
 
-# ----- Initializing the pins ------
-extend = Pin('GPIO6', Pin.OUT) # Pico Pin 6, L298H IN1
-retract = Pin('GPIO7', Pin.OUT) # Pico Pin 7, L298H IN2
+# initializing the pins
+extend = Pin('GPIO6', Pin.OUT)
+retract = Pin('GPIO7', Pin.OUT)
 extend.off()
 retract.off()
 
-# ----- Linear actuator control by specified time ------
 def extendActuatorTime(sec):
     global extend
     
@@ -28,7 +27,7 @@ def retractActuatorTime(sec):
     retract.off()
     time.sleep(0.1)
     
-# ----- Linear actuator control by set time ------
+
 def extendActuator():
     global extend
     
@@ -44,15 +43,20 @@ def retractActuator():
     time.sleep(sec)
     retract.off()
     time.sleep(0.1)
-    
-# ----- Test Code ------
-def runTest():
-    extendActuatorTime(.6) # TODO: This timing will need to be adjusted based on the height of the load cell rig
-    time.sleep(0.5)
-    retractActuatorTime(.7)
 
-# Runs the linear actuator to depress the key 30 times
-for i in range(0, 30):
+def test():
+    for num in range(0,2):
+        print("Extending...")
+        extendActuator()
+        print("retracting...")
+        retractActuator()
+
+def runTest():
+    extendActuatorTime(.74)
+    time.sleep(0.5)
+    retractActuatorTime(.75)
+
+for i in range(0,85):
     runTest()
     time.sleep(0.1)
 
