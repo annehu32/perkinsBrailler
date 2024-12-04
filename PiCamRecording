@@ -1,0 +1,32 @@
+# Core opencv code provided by Einsteinium Studios
+# Revisions to work with Pi Camera v3 by Briana Bouchard
+# More revisions by Natalie Nicoletti
+
+import numpy as np
+import cv2
+from picamera2 import Picamera2
+from libcamera import controls
+from picamera2.encoders import H264Encoder
+from time import sleep, time
+
+
+picam2 = Picamera2() # assigns camera variable
+picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous}) # sets auto foc>
+video_config = picam2.create_video_configuration()
+picam2.configure(video_config)
+encoder = H264Encoder(2500000)
+sleep(1) # wait to give camera time to start up
+picam2.start() #activates camera
+
+try:
+    while True:
+        # Display camera 
+        # take a video recording 
+        timestamp = int(time())
+        filename = f'/home/pi/video_{timestamp}.h264'
+        picam2.start_recording(encoder, filename) 
+        sleep(2) 
+        picam2.stop_recording()
+        sleep(10)
+except KeyboardInterrupt:
+    print('All done')
