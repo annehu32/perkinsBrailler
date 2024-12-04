@@ -9,6 +9,20 @@ from libcamera import controls
 from picamera2.encoders import H264Encoder
 from time import sleep, time
 
+# Paths to the onboard LED control
+LED_TRIGGER_PATH = "/sys/class/leds/ACT/trigger"
+LED_BRIGHTNESS_PATH = "/sys/class/leds/ACT/brightness"
+# Function to set the LED trigger mode
+def set_led_trigger(mode):
+    with open(LED_TRIGGER_PATH, "w") as f:
+        f.write(mode)
+
+# Function to control the LED brightness
+def set_led_brightness(value):
+    with open(LED_BRIGHTNESS_PATH, "w") as f:
+        f.write(str(value))
+# Configure the ACT LED for manual control
+set_led_trigger("none")  # Disable default trigger mode to allow manual control
 
 picam2 = Picamera2() # assigns camera variable
 picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous}) # sets auto foc>
@@ -18,15 +32,28 @@ encoder = H264Encoder(2500000)
 sleep(1) # wait to give camera time to start up
 picam2.start() #activates camera
 
+# Configure the onboard LED for manual control
+set_led_trigger("none")  # Disable default trigger mode
+
 try:
     while True:
-        # Display camera 
+        
+        # Display camera
         # take a video recording 
         timestamp = int(time())
         filename = f'/home/pi/video_{timestamp}.h264'
         picam2.start_recording(encoder, filename) 
-        sleep(2) 
+        sleep(10) 
         picam2.stop_recording()
-        sleep(10)
+        # Blink the onboard LED during the 10-second wait
+        for i in range(1800):  # Blink for 10 seconds (1 blink per second)
+            set_led_brightness(1)  # Turn LED on
+            sleep(0.5)
+            set_led_brightness(0)  # Turn LED off
+            sleep(0.5)
+
 except KeyboardInterrupt:
     print('All done')
+finally:
+    # Restore the LED's default behavior
+    set_led_trigger("mmc0")  # Re-enable SD card activity indicator
