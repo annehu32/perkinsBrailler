@@ -1,48 +1,55 @@
-data = load('test3b.mat');
-forceReadings = data.data;
+allData = ['test1b.mat', 'test1c.mat',
+            'test2a.mat', 'test2b.mat', 'test2c.mat',
+            'test3a.mat', 'test3b.mat',
+            'test4c.mat',
+            'test5a.mat', 'test5b.mat', 'test5c.mat'];
+averageForce = [];
 
-% Filtering out noise
-forceReadings(forceReadings == -0.01) = [];
-forceReadings(forceReadings == -0.02) = [];
-forceReadings(forceReadings == 0) = [];
-forceReadings(forceReadings == 0.01) = [];
-forceReadings(forceReadings == 0.02) = [];
-forceReadings(forceReadings == 0.03) = [];
-
-% Calibrated values
-offset = -0.254;
-scaleFactor = 0.523;
-calibrated = (forceReadings * scaleFactor) + offset;
-
-% Adding timesstamps
-dt = 0.1;
-numReadings = length(calibrated);
-timestamps = (0:dt:numReadings - 1)*dt;
-
-% Locating maximums
-numTrials = 30;
-trialLength = floor(length(calibrated) / numTrials); % Ensure integer trial length
-maxPerTrial = zeros(1, numTrials);
-
-for i = 1:numTrials-1
-    % Define start and end indices for each trial
-    startIdx = (i-1)*trialLength + 1;
-    if i == numTrials
-        % Ensure last trial includes any leftover data
-        endIdx = length(calibrated);
-    else
-        endIdx = i*trialLength;
-    end
+for test = 0 :(length(allData) - 1)
+    data = load('test1b.mat');
+    forceReadings = data.data;
     
-    trialData = calibrated(startIdx:endIdx); % Extract trial data
+    % Filtering out noise
+    forceReadings(forceReadings == -0.01) = [];
+    forceReadings(forceReadings == -0.02) = [];
+    forceReadings(forceReadings == 0) = [];
+    forceReadings(forceReadings == 0.01) = [];
+    forceReadings(forceReadings == 0.02) = [];
+    forceReadings(forceReadings == 0.03) = [];
     
-    % Find peaks and compute the maximum
-    peaks = findpeaks(trialData);
-    if ~isempty(peaks)
-        maxPerTrial(i) = max(peaks); % Store the maximum peak
-    else
-        maxPerTrial(i) = NaN; % Handle case where no peaks are found
+    % Calibrated values
+    offset = -0.254;
+    scaleFactor = 0.523;
+    calibrated = (forceReadings * scaleFactor) + offset;
+    
+    % Adding timesstamps
+    dt = 0.1;
+    numReadings = length(calibrated);
+    timestamps = 0:dt:(numReadings - 1)*dt;
+    
+    % Locating maximums
+    timeDerivative = gradient(calibrated(:))./gradient(timestamps(:));
+    
+    plot(timestamps,timeDerivative,'r', 'LineWidth', 2); % Derivative in Red
+    hold on;
+    plot(timestamps, calibrated, 'b--', 'LineWidth', 2); % Force in Blue
+    
+    maxIndex = [];
+    maxVals = [];
+    
+    for index = 1: (length(timeDerivative) - 1)
+         curr = timeDerivative(index);
+         next = timeDerivative(index+1);
+         disp("current: "+curr+", next: "+next)
+    
+         if curr > 0
+             if next < 0
+                maxIndex(end+1) = index;
+                maxVals(end+1)=forceReadings(index+1);
+             end
+         end
+     
     end
+
+    averageForce(test)
 end
-
-disp(maxPerTrial);
