@@ -1,12 +1,10 @@
-allData = ['test1b.mat', 'test1c.mat',
-            'test2a.mat', 'test2b.mat', 'test2c.mat',
-            'test3a.mat', 'test3b.mat',
-            'test4c.mat',
-            'test5a.mat', 'test5b.mat', 'test5c.mat'];
+allData = {'test1b.mat', 'test1c.mat', 'test2a.mat', 'test2b.mat', 'test2c.mat','test3a.mat', 'test3b.mat', 'test3c.mat','test4a.mat', 'test4b.mat','test4c.mat','test5a.mat', 'test5b.mat', 'test5c.mat'};
 averageForce = [];
 
-for test = 0 :(length(allData) - 1)
-    data = load('test1b.mat');
+for test = 1 :(length(allData))
+    toLoad = allData{test};
+    disp(toLoad)
+    data = load(toLoad);
     forceReadings = data.data;
     
     % Filtering out noise
@@ -30,17 +28,16 @@ for test = 0 :(length(allData) - 1)
     % Locating maximums
     timeDerivative = gradient(calibrated(:))./gradient(timestamps(:));
     
-    plot(timestamps,timeDerivative,'r', 'LineWidth', 2); % Derivative in Red
-    hold on;
-    plot(timestamps, calibrated, 'b--', 'LineWidth', 2); % Force in Blue
-    
+%     plot(timestamps,timeDerivative,'r', 'LineWidth', 2); % Derivative in Red
+%     hold on;
+%     plot(timestamps, calibrated, 'b--', 'LineWidth', 2); % Force in Blue
+     
     maxIndex = [];
     maxVals = [];
     
     for index = 1: (length(timeDerivative) - 1)
          curr = timeDerivative(index);
          next = timeDerivative(index+1);
-         disp("current: "+curr+", next: "+next)
     
          if curr > 0
              if next < 0
@@ -51,5 +48,9 @@ for test = 0 :(length(allData) - 1)
      
     end
 
-    averageForce(test)
+    averageForce(test) = mean(maxVals,'omitnan');
 end
+
+% Final results
+results = table(allData(:), averageForce(:), 'VariableNames', {'TestName', 'AverageForce'});
+disp(results);
