@@ -1,24 +1,24 @@
-#### NOTES ON HOW TO RUN THIS FILE ####
-
-# to run without the code stopping even when you close your computer
-#nohup sudo python3 pi_cam_code.py &
-
-# kill running code when you are done with the test
-#sudo pkill -f pi_cam_code.py
-
-# see what’s running in the background, make sure you actually killed code
-#ps aux | grep python
-
-# make led go back to normal state of blinking when booting/recieving data or whatnot
-
-#sudo bash -c 'echo mmc0 > /sys/class/leds/ACT/trigger'
-
-
-
-
+% PiCamRecording.py
 # Core opencv code provided by Einsteinium Studios
 # Revisions to work with Pi Camera v3 by Briana Bouchard
 # More revisions by Natalie Nicoletti
+% Purpose: To monitor the cycle test by taking 10 second videos every 0.5 hours
+
+#### NOTES ON HOW TO RUN THIS FILE ####
+
+## to run the code (without stopping even when you close your computer)
+#nohup sudo python3 pi_cam_code.py &
+
+## to kill running code when you are done with the test
+#sudo pkill -f pi_cam_code.py
+
+## to see what’s running in the background. Ensure you did kill the code
+#ps aux | grep python
+
+## force led go back to normal state of blinking when booting/recieving data
+
+#sudo bash -c 'echo mmc0 > /sys/class/leds/ACT/trigger'
+
 
 import numpy as np
 import cv2
